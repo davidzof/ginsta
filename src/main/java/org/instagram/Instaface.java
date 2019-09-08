@@ -1,26 +1,81 @@
 package org.instagram;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
+import org.brunocvcunha.instagram4j.Instagram4j;
+import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
+import org.brunocvcunha.instagram4j.requests.InstagramUploadVideoRequest;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramLoginResult;
+import org.brunocvcunha.instagram4j.requests.payload.InstagramSearchUsernameResult;
+
+/*
+ * https://www.androidtipster.com/instagram-limits/
+ */
 public class Instaface {
-	/*https://www.androidtipster.com/instagram-limits/
-	 * // Login to instagram Instagram4j instagram =
-	 * Instagram4j.builder().username("davidegeorgio")
-	 * .password("fbleakhous3").build(); instagram.setup(); try {
-	 * instagram.login();
-	 * 
-	 * System.out.println("upload film"); instagram.sendRequest(new
-	 * InstagramUploadVideoRequest( new
-	 * File("/Users/TBSL1730/Documents/aixroller.mp4"),
-	 * "#aix #rollerski #lacdubourget #summer #skiroues #france"));
-	 * 
-	 * 
-	 * 
+	Instagram4j instagram;
+
+	public void login(String user, String password) {
+		instagram = Instagram4j.builder().username(user).password(password)
+				.build();
+		instagram.setup();
+		try {
+			InstagramLoginResult instagramLoginResult = instagram.login();
+			if (Objects.equals(instagramLoginResult.getStatus(), "ok")) {
+				System.out.println("login success");
+			} else {
+				instagram = null;
+				return;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			instagram = null;
+		}
+
+		System.out.println("Check user leopardogeo");
+		InstagramSearchUsernameResult userResult;
+		try {
+			userResult = instagram
+					.sendRequest(new InstagramSearchUsernameRequest(
+							"leopardageo"));
+			System.out.println("ID for @leopardageo is "
+					+ userResult.getUser().getPk());
+			System.out.println("Number of followers: "
+					+ userResult.getUser().getFollower_count());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public String uploadVideo(String fileName, String caption) {
+		if (instagram == null) {
+			return "Not logged in";
+		}
+
+		try {
+			instagram.sendRequest(new InstagramUploadVideoRequest(new File(
+					fileName), caption));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return e.getMessage();
+		}
+
+		return "Video uploaded successfully";
+	}
+
+	/*
 	 * System.out.println("Check user leopardogeo");
 	 * InstagramSearchUsernameResult userResult = instagram .sendRequest(new
 	 * InstagramSearchUsernameRequest("leopardageo"));
 	 * System.out.println("ID for @leopardageo is " +
-	 * userResult.getUser().getPk());
-	 * System.out.println("Number of followers: " +
-	 * userResult.getUser().getFollower_count());
+	 * userResult.getUser().getPk()); System.out.println("Number of followers: "
+	 * + userResult.getUser().getFollower_count());
 	 * 
 	 * InstagramGetUserFollowersResult githubFollowers =
 	 * instagram.sendRequest(new
