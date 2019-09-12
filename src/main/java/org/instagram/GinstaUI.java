@@ -78,7 +78,7 @@ public class GinstaUI extends JPanel implements ActionListener {
 			//if (file.endsWith(".mp4")) {
 				Instaface instaface = new Instaface();
 System.out.println(username + " : " + password);
-				instaface.login(username, password);
+				instaface.loginWithProxy(username, password, "http", 8080, "145.239.169.41");
 				//String message = instaface.uploadVideo(file, comment);
 				//fileName.setText(message);
 			//}
